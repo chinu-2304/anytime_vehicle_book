@@ -4,34 +4,17 @@ import Booking from "@/models/booking.model";
 
 export async function POST(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
-  try {
-    await connectDb();
+  await connectDb();
 
-    const { id } = await context.params;
+  const booking = await Booking.findById(params.id);
+  if (!booking)
+    return NextResponse.json({ message: "Not found" }, { status: 404 });
 
-    const booking = await Booking.findById(id);
+booking.status = "arriving";
 
-    if (!booking) {
-      return NextResponse.json(
-        { message: "Booking not found" },
-        { status: 404 }
-      );
-    }
+  await booking.save();
 
-    booking.status = "completed";
-
-    await booking.save();
-
-    return NextResponse.json({
-      success: true,
-      booking,
-    });
-  } catch (error) {
-    return NextResponse.json(
-      { success: false, error },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json({ success: true });
 }
