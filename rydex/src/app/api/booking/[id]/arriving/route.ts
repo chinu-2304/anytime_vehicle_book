@@ -4,7 +4,7 @@ import Booking from "@/models/booking.model";
 
 export async function POST(
   req: NextRequest,
-  { params }: { context: { params : promise< {id: string }> }
+  { params }: { context: { params : Promise< {id: string }> }
 ) {
   await connectDb();
 
